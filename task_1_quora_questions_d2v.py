@@ -61,30 +61,32 @@ def remove_specical_characters(review_text):
 labeled_questions=[]
 questions1_split = []
 questions2_split = []
+i = 0
 for index, row in df.iterrows():
     # print(row['question1'])
     row['question1'] = remove_specical_characters(row['question1'])
     row['question1'] = remove_stopwords(row['question1'])
-    print("Questions pair #" + str(row + 1) + "of" + str(len(df.index)) + " cleaned")
+    print("Questions pair #" + str(i + 1) + " of " + str(len(df.index)) + " cleaned")
     # print(row['question1'])
+    i = i + 1
 
 print("Text cleaning completed")
 questions1 = df.question1
 questions2 = df.question2
-i = 0;
+i = 0
 for index, row in df.iterrows():
     labeled_questions.append(TaggedDocument(questions1[i].split(), df[df.index == i].qid1))
     labeled_questions.append(TaggedDocument(questions2[i].split(), df[df.index == i].qid2))
     questions1_split.append(questions1[i].split())
     questions2_split.append(questions2[i].split())
-    print("Questions pair #" + str(i+1) + "of" + str(len(df.index)) + " labeled")
-    i = i + 1;
+    print("Questions pair #" + str(i+1) + " of " + str(len(df.index)) + " labeled")
+    i = i + 1
 print("Questions labeling completed")
 np.save("labeled_questions.npy", labeled_questions)
 
 # Model Learning
 
-model = Doc2Vec(dm = 1, min_count=1, window=10, vector_size=150, sample=1e-4, negative=10)
+model = Doc2Vec(dm=1, min_count=1, window=10, vector_size=150, sample=1e-4, negative=10)
 model.build_vocab(labeled_questions)
 print("Model building completed")
 # Train the model with 20 epochs
@@ -100,7 +102,7 @@ word = 'Washington'
 print("Similarity to word:" + word)
 print(model.wv.most_similar(word))
 
-print ('Our model result accuracy:')
+print('Our model result accuracy:')
 
 i = 0;
 scores = []
@@ -110,7 +112,7 @@ for index in questions1_split:
         scores.append(1)
     else:
         scores.append(0)
-    i = i+1;
+    i = i+1
     # print("Pair ID: ", i,". Score: ",  score)
 
 

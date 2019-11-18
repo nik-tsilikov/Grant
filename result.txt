@@ -1,0 +1,26 @@
+Model building completed
+Epoch #1 is complete.
+Epoch #2 is complete.
+Epoch #3 is complete.
+Epoch #4 is complete.
+Epoch #5 is complete.
+Epoch #6 is complete.
+Epoch #7 is complete.
+Epoch #8 is complete.
+Epoch #9 is complete.
+Epoch #10 is complete.
+Epoch #11 is complete.
+Epoch #12 is complete.
+Epoch #13 is complete.
+Epoch #14 is complete.
+Epoch #15 is complete.
+Epoch #16 is complete.
+Epoch #17 is complete.
+Epoch #18 is complete.
+Epoch #19 is complete.
+Epoch #20 is complete.
+Model learning completed
+Similarity to word:Washington
+[('D.C.', 0.5358211994171143), ('George', 0.5191558599472046), ('Soviet', 0.46391749382019043), ('Denzel', 0.46117570996284485), ('Federal?', 0.4504508972167969), ("Day'?", 0.44075289368629456), ('dynamics', 0.4389168918132782), ("'Training", 0.4280218780040741), ('Louis', 0.4260839819908142), ('silos?', 0.4239429235458374)]
+Our model result accuracy:
+42.97342973429734
