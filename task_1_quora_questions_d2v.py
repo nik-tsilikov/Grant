@@ -22,11 +22,8 @@ from gensim.models.doc2vec import TaggedDocument
 
 
 # Import Data
-
-#                 dtype = {'question1' : str, 'question2' : str})
-df = pd.read_excel('./questions_corrected_2.xlsx')
-questions1 = df.question1
-questions2 = df.question2
+# df = pd.read_excel('task1_questions_small_corrected.xlsx')
+df = pd.read_excel('task1_questions_corrected_2.xlsx')
 
 # Check for null values
 df[df.isnull().any(axis=1)]
@@ -34,56 +31,62 @@ df[df.isnull().any(axis=1)]
 # Drop rows with null Values
 df.drop(df[df.isnull().any(axis=1)].index, inplace=True)
 
-questions1 = df.question1
-questions2 = df.question2
+print("Data import completed")
+# Remove stop words
+nltk.download('stopwords')
+stops = set(stopwords.words("english"))
+def remove_stopwords(text):
+    words = [w for w in text.lower().split() if not w in stops]
+    final_text = " ".join(words)
+    return final_text
 
-# print(questions1)
-# print(questions2)
-# # Remove stop words
-# def remove_stopwords(text):
-#     nltk.download('stopwords')
-#     stops = set(stopwords.words("english"))
-#     words = [w for w in text.lower().split() if not w in stops]
-#     final_text = " ".join(words)
-#     return final_text
-#
-# # Special Characters
-# def remove_specical_characters(review_text):
-#     re.sub(r"[^A-Za-z0-9(),!.?\'`]", " ", review_text )
-#     re.sub(r"\'s", " 's ", final_text )
-#     re.sub(r"\'ve", " 've ", final_text )
-#     re.sub(r"n\'t", " 't ", final_text )
-#     re.sub(r"\'re", " 're ", final_text )
-#     re.sub(r"\'d", " 'd ", final_text )
-#     re.sub(r"\'ll", " 'll ", final_text )
-#     re.sub(r",", " ", final_text )
-#     re.sub(r"\.", " ", final_text )
-#     re.sub(r"!", " ", final_text )
-#     re.sub(r"\(", " ( ", final_text )
-#     re.sub(r"\)", " ) ", final_text )
-#     re.sub(r"\?", " ", final_text )
-#     re.sub(r"\s{2,}", " ", final_text )
-#     return review_text
-#
+# Special Characters
+def remove_specical_characters(review_text):
+    review_text = re.sub(r"[^A-Za-z0-9(),!.?\'`]", " ", review_text )
+    review_text = re.sub(r"\'s", " 's ", review_text )
+    review_text = re.sub(r"\'ve", " 've ", review_text)
+    review_text = re.sub(r"n\'t", " 't ", review_text )
+    review_text = re.sub(r"\'re", " 're ", review_text )
+    review_text = re.sub(r"\'d", " 'd ", review_text )
+    review_text = re.sub(r"\'ll", " 'll ", review_text )
+    review_text = re.sub(r",", " ", review_text )
+    review_text = re.sub(r"\.", " ", review_text )
+    review_text = re.sub(r"!", " ", review_text )
+    review_text = re.sub(r"\(", " ( ", review_text )
+    review_text = re.sub(r"\)", " ) ", review_text )
+    review_text = re.sub(r"\?", " ", review_text )
+    review_text = re.sub(r"\s{2,}", " ", review_text )
+    return review_text
+
 labeled_questions=[]
 questions1_split = []
 questions2_split = []
+for index, row in df.iterrows():
+    # print(row['question1'])
+    row['question1'] = remove_specical_characters(row['question1'])
+    row['question1'] = remove_stopwords(row['question1'])
+    print("Questions pair #" + str(row + 1) + "of" + str(len(df.index)) + " cleaned")
+    # print(row['question1'])
+
+print("Text cleaning completed")
+questions1 = df.question1
+questions2 = df.question2
 i = 0;
 for index, row in df.iterrows():
     labeled_questions.append(TaggedDocument(questions1[i].split(), df[df.index == i].qid1))
     labeled_questions.append(TaggedDocument(questions2[i].split(), df[df.index == i].qid2))
     questions1_split.append(questions1[i].split())
     questions2_split.append(questions2[i].split())
+    print("Questions pair #" + str(i+1) + "of" + str(len(df.index)) + " labeled")
     i = i + 1;
-
-
+print("Questions labeling completed")
 np.save("labeled_questions.npy", labeled_questions)
 
 # Model Learning
 
 model = Doc2Vec(dm = 1, min_count=1, window=10, vector_size=150, sample=1e-4, negative=10)
 model.build_vocab(labeled_questions)
-
+print("Model building completed")
 # Train the model with 20 epochs
 
 for epoch in range(20):
@@ -91,8 +94,9 @@ for epoch in range(20):
     print("Epoch #{} is complete.".format(epoch + 1))
 
 model.save('quora_model')
-
+print("Model learning completed")
 word = 'Washington'
+#word = 'speed'
 print("Similarity to word:" + word)
 print(model.wv.most_similar(word))
 
