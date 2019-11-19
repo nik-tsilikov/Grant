@@ -1,3 +1,4 @@
+Questions labeling completed
 Model building completed
 Epoch #1 is complete.
 Epoch #2 is complete.
@@ -21,6 +22,8 @@ Epoch #19 is complete.
 Epoch #20 is complete.
 Model learning completed
 Similarity to word:Washington
-[('D.C.', 0.5358211994171143), ('George', 0.5191558599472046), ('Soviet', 0.46391749382019043), ('Denzel', 0.46117570996284485), ('Federal?', 0.4504508972167969), ("Day'?", 0.44075289368629456), ('dynamics', 0.4389168918132782), ("'Training", 0.4280218780040741), ('Louis', 0.4260839819908142), ('silos?', 0.4239429235458374)]
+[('Washington,', 0.5266590118408203), ('Florida', 0.479605108499527), ('San', 0.46913981437683105), ('California', 0.4647088646888733), ('Chicago', 0.44322657585144043), ('Georgia', 0.42062294483184814), ('Illinois', 0.4059353768825531), ('bay', 0.40286773443222046), ('Baltimore', 0.40074676275253296), ('Penn', 0.3955877423286438)]
 Our model result accuracy:
-42.97342973429734
+38.85632601781642
+
+Process finished with exit code 0
