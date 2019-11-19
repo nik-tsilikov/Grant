@@ -23,7 +23,7 @@ from gensim.models.doc2vec import TaggedDocument
 
 # Import Data
 # df = pd.read_excel('task1_questions_small_corrected.xlsx')
-df = pd.read_excel('task1_questions_corrected_2.xlsx')
+df = pd.read_excel('task1_questions_corrected.xlsx')
 
 # Check for null values
 df[df.isnull().any(axis=1)]
@@ -66,6 +66,8 @@ for index, row in df.iterrows():
     # print(row['question1'])
     row['question1'] = remove_specical_characters(row['question1'])
     row['question1'] = remove_stopwords(row['question1'])
+    row['question2'] = remove_specical_characters(row['question2'])
+    row['question2'] = remove_stopwords(row['question2'])
     print("Questions pair #" + str(i + 1) + " of " + str(len(df.index)) + " cleaned")
     # print(row['question1'])
     i = i + 1
