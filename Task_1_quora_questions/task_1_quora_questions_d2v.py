@@ -23,7 +23,7 @@ from gensim.models.doc2vec import TaggedDocument
 
 # Import Data
 # df = pd.read_excel('task1_questions_small_corrected.xlsx')
-df = pd.read_excel('task1_questions_corrected.xlsx')
+df = pd.read_excel('task1_questions_small_corrected.xlsx')
 
 # Check for null values
 df[df.isnull().any(axis=1)]
@@ -61,29 +61,25 @@ def remove_specical_characters(review_text):
 labeled_questions=[]
 questions1_split = []
 questions2_split = []
-i = 0
-for index, row in df.iterrows():
-    # print(row['question1'])
-    row['question1'] = remove_specical_characters(row['question1'])
-    row['question1'] = remove_stopwords(row['question1'])
-    row['question2'] = remove_specical_characters(row['question2'])
-    row['question2'] = remove_stopwords(row['question2'])
-    print("Questions pair #" + str(i + 1) + " of " + str(len(df.index)) + " cleaned")
-    # print(row['question1'])
-    i = i + 1
 
-print("Text cleaning completed")
 questions1 = df.question1
 questions2 = df.question2
 i = 0
 for index, row in df.iterrows():
-    labeled_questions.append(TaggedDocument(questions1[i].split(), df[df.index == i].qid1))
-    labeled_questions.append(TaggedDocument(questions2[i].split(), df[df.index == i].qid2))
-    questions1_split.append(questions1[i].split())
-    questions2_split.append(questions2[i].split())
+    question = questions1[i];
+    question = remove_specical_characters(question)
+    question = remove_stopwords(question)
+    labeled_questions.append(TaggedDocument(question.split(), df[df.index == i].qid1))
+    questions1_split.append(question.split())
+    question = questions2[i];
+    question = remove_specical_characters(question)
+    question = remove_stopwords(question)
+    labeled_questions.append(TaggedDocument(question.split(), df[df.index == i].qid2))
+    questions2_split.append(question.split())
     print("Questions pair #" + str(i+1) + " of " + str(len(df.index)) + " labeled")
     i = i + 1
 print("Questions labeling completed")
+#print(labeled_questions)
 np.save("labeled_questions.npy", labeled_questions)
 
 # Model Learning
@@ -91,16 +87,16 @@ np.save("labeled_questions.npy", labeled_questions)
 model = Doc2Vec(dm=1, min_count=1, window=10, vector_size=150, sample=1e-4, negative=10)
 model.build_vocab(labeled_questions)
 print("Model building completed")
-# Train the model with 20 epochs
 
+# Train the model with 20 epochs
 for epoch in range(20):
     model.train(labeled_questions, epochs=model.epochs, total_examples=model.corpus_count)
     print("Epoch #{} is complete.".format(epoch + 1))
 
 model.save('quora_model')
 print("Model learning completed")
-word = 'Washington'
-#word = 'speed'
+# word = 'Washington'
+word = 'speed'
 print("Similarity to word:" + word)
 print(model.wv.most_similar(word))
 
