@@ -59,9 +59,10 @@ def remove_special_characters(review_text):
     # review_text = re.sub(r"\s{2,}", " ", review_text )
     return review_text
 
-labeled_records=[]
+labeled_records = []
 records1_split = []
 records2_split = []
+correct_answers = []
 
 records1 = df.record1
 records2 = df.record2
@@ -78,6 +79,7 @@ for index, row in df.iterrows():
         records1_split.append(record1.split())
         labeled_records.append(TaggedDocument(record2.split(), df[df.index == i].rid2))
         records2_split.append(record2.split())
+        correct_answers.append(row["is_duplicate"])
         print("Records pair #" + str(i+1) + " of " + str(len(df.index)) + " labeled")
     else:
         print("Records pair #" + str(i + 1) + " of " + str(len(df.index)) + " is empty and will not be processed")
@@ -87,6 +89,7 @@ print("Records labeling completed")
 np.save("labeled_records.npy", labeled_records, allow_pickle=True)
 np.save("records1_split", records1_split, allow_pickle=True)
 np.save("records2_split", records2_split, allow_pickle=True)
+np.save("correct_answers", correct_answers, allow_pickle=True)
 print("Data saving completed")
 
 # Model Learning

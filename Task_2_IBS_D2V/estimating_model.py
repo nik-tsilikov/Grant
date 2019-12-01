@@ -17,7 +17,7 @@ model = Doc2Vec.load("IBS_dup_model")
 records1_split = np.load("records1_split.npy", allow_pickle=True)
 records2_split = np.load("records2_split.npy", allow_pickle=True)
 
-#df = pd.read_excel('task1_questions_small_corrected.xlsx')
+# df = pd.read_excel('task1_questions_small_corrected.xlsx')
 df = pd.read_excel('dataset_for_doc2vec_simple_pairs.xlsx')
 
 # Check for null values
@@ -32,14 +32,14 @@ i = 0
 scores = []
 for index in records1_split:
     score = model.wv.n_similarity(records1_split[i], records2_split[i])
-    if (score > 0.6):
+    if score > 0.6:
         scores.append(1)
     else:
         scores.append(0)
-    i = i+1
-    print(records1_split[i])
-    print("Pair ID: ", i,". Score: ",  score)
 
+    # print(records1_split[i])
+    print("Pair ID: ", i, ". Score: ",  score)
+    i = i + 1
 
 
 accuracy = accuracy_score(df.is_duplicate, scores) * 100
