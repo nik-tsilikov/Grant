@@ -22,8 +22,8 @@ from gensim.models.doc2vec import TaggedDocument
 
 
 # Import Data
-# df = pd.read_excel('task1_questions_small_corrected.xlsx')
-df = pd.read_excel('task1_questions_small_corrected.xlsx')
+#df = pd.read_excel('task1_questions_small_corrected.xlsx')
+df = pd.read_excel('dataset_for_doc2vec_simple_pairs.xlsx')
 
 # Check for null values
 df[df.isnull().any(axis=1)]
@@ -34,98 +34,76 @@ df.drop(df[df.isnull().any(axis=1)].index, inplace=True)
 print("Data import completed")
 # Remove stop words
 nltk.download('stopwords')
-stops = set(stopwords.words("english"))
+stops = set(stopwords.words("russian"))
 def remove_stopwords(text):
     words = [w for w in text.lower().split() if not w in stops]
     final_text = " ".join(words)
     return final_text
 
+
 # Special Characters
-def remove_specical_characters(review_text):
-    review_text = re.sub(r"[^A-Za-z0-9(),!.?\'`]", " ", review_text )
-    review_text = re.sub(r"\'s", " 's ", review_text )
-    review_text = re.sub(r"\'ve", " 've ", review_text)
-    review_text = re.sub(r"n\'t", " 't ", review_text )
-    review_text = re.sub(r"\'re", " 're ", review_text )
-    review_text = re.sub(r"\'d", " 'd ", review_text )
-    review_text = re.sub(r"\'ll", " 'll ", review_text )
-    review_text = re.sub(r",", " ", review_text )
-    review_text = re.sub(r"\.", " ", review_text )
-    review_text = re.sub(r"!", " ", review_text )
-    review_text = re.sub(r"\(", " ( ", review_text )
-    review_text = re.sub(r"\)", " ) ", review_text )
-    review_text = re.sub(r"\?", " ", review_text )
-    review_text = re.sub(r"\s{2,}", " ", review_text )
+def remove_special_characters(review_text):
+    review_text = re.sub(r"[^А-Яа-я0-9(),!.?\'`]", " ", review_text)
+    # review_text = re.sub(r"\'s", " 's ", review_text )
+    # review_text = re.sub(r"\'ve", " 've ", review_text)
+    # review_text = re.sub(r"n\'t", " 't ", review_text )
+    # review_text = re.sub(r"\'re", " 're ", review_text )
+    # review_text = re.sub(r"\'d", " 'd ", review_text )
+    # review_text = re.sub(r"\'ll", " 'll ", review_text )
+    # review_text = re.sub(r",", " ", review_text )
+    # review_text = re.sub(r"\.", " ", review_text )
+    # review_text = re.sub(r"!", " ", review_text )
+    # review_text = re.sub(r"\(", " ( ", review_text )
+    # review_text = re.sub(r"\)", " ) ", review_text )
+    # review_text = re.sub(r"\?", " ", review_text )
+    # review_text = re.sub(r"\s{2,}", " ", review_text )
     return review_text
 
-labeled_questions=[]
-questions1_split = []
-questions2_split = []
-# i = 0
-# for index, row in df.iterrows():
-#     # print(row['question1'])
-#     row['question1'] = remove_specical_characters(row['question1'])
-#     row['question1'] = remove_stopwords(row['question1'])
-#     row['question2'] = remove_specical_characters(row['question2'])
-#     row['question2'] = remove_stopwords(row['question2'])
-#     print("Questions pair #" + str(i + 1) + " of " + str(len(df.index)) + " cleaned")
-#     # print(row['question1'])
-#     i = i + 1
-#
-# print("Text cleaning completed")
-questions1 = df.question1
-questions2 = df.question2
+labeled_records=[]
+records1_split = []
+records2_split = []
+
+records1 = df.record1
+records2 = df.record2
 i = 0
 for index, row in df.iterrows():
-    question = questions1[i];
-    question = remove_specical_characters(question)
-    question = remove_stopwords(question)
-    labeled_questions.append(TaggedDocument(question.split(), df[df.index == i].qid1))
-    questions1_split.append(question.split())
-    question = questions2[i];
-    question = remove_specical_characters(question)
-    question = remove_stopwords(question)
-    labeled_questions.append(TaggedDocument(question.split(), df[df.index == i].qid2))
-    questions2_split.append(question.split())
-    print("Questions pair #" + str(i+1) + " of " + str(len(df.index)) + " labeled")
+    record1 = records1[i]
+    record2 = records2[i]
+    record1 = remove_special_characters(record1)
+    record2 = remove_special_characters(record2)
+    record1 = remove_stopwords(record1)
+    record2 = remove_stopwords(record2)
+    if record1 != '' and record2 != '':
+        labeled_records.append(TaggedDocument(record1.split(), df[df.index == i].rid1))
+        records1_split.append(record1.split())
+        labeled_records.append(TaggedDocument(record2.split(), df[df.index == i].rid2))
+        records2_split.append(record2.split())
+        print("Records pair #" + str(i+1) + " of " + str(len(df.index)) + " labeled")
+    else:
+        print("Records pair #" + str(i + 1) + " of " + str(len(df.index)) + " is empty and will not be processed")
     i = i + 1
-print("Questions labeling completed")
+print("Records labeling completed")
 
-np.save("labeled_questions.npy", labeled_questions)
+np.save("labeled_records.npy", labeled_records, allow_pickle=True)
+np.save("records1_split", records1_split, allow_pickle=True)
+np.save("records2_split", records2_split, allow_pickle=True)
+print("Data saving completed")
 
 # Model Learning
 
 model = Doc2Vec(dm=1, min_count=1, window=10, vector_size=150, sample=1e-4, negative=10)
-model.build_vocab(labeled_questions)
+model.build_vocab(labeled_records)
 print("Model building completed")
-# Train the model with 20 epochs
 
+# Train the model with 20 epochs
 for epoch in range(20):
-    model.train(labeled_questions, epochs=model.epochs, total_examples=model.corpus_count)
+    model.train(labeled_records, epochs=model.epochs, total_examples=model.corpus_count)
     print("Epoch #{} is complete.".format(epoch + 1))
 
-model.save('quora_model')
-print("Model learning completed")
-# word = 'Washington'
-word = 'speed'
-print("Similarity to word:" + word)
-print(model.wv.most_similar(word))
+model.save('IBS_dup_model')
+# print("Model learning completed")
+# # word = 'Washington'
+# # # word = 'speed'
+# # print("Similarity to word:" + word)
+# # print(model.wv.most_similar(word))
 
-print('Our model result accuracy:')
-
-i = 0;
-scores = []
-for index in questions1_split:
-    score = model.wv.n_similarity(questions1_split[i], questions2_split[i])
-    if (score > 0.6):
-        scores.append(1)
-    else:
-        scores.append(0)
-    i = i+1
-    # print("Pair ID: ", i,". Score: ",  score)
-
-
-
-accuracy = accuracy_score(df.is_duplicate, scores) * 100
-
-print (accuracy)
