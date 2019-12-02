@@ -24,7 +24,7 @@ i = 0
 scores = []
 for index in records1_split:
     score = model.wv.n_similarity(records1_split[i], records2_split[i])
-    if score > 0.6:
+    if score > 0.9:
         scores.append(1)
     else:
         scores.append(0)
@@ -37,3 +37,8 @@ for index in records1_split:
 accuracy = accuracy_score(correct_answers, scores) * 100
 
 print(accuracy)
+
+# 0.6 : 89
+# 0.7 : 91.7
+# 0.8 : 93.3
+# 0.9 : 96.3
