@@ -9,10 +9,10 @@ def tokenize(text):
 
 
 # Сравнение каждого слова в строке с искомым
-def find_variation(tokenized_string, standard):
+def find_variation(tokenized_string, standart):
     for word in tokenized_string:
-        print(standart, word, fuzz.ratio(standard, word))
-        if fuzz.ratio(standard, word) >= 60:
+        print(standart, word, fuzz.ratio(standart, word))
+        if fuzz.ratio(standart, word) >= 60:
             return word
 
 
@@ -40,15 +40,7 @@ def clean_text(review_text):
     return ''.join(e for e in review_text if (e == ' ' or not e.isdigit()))
 
 
-# Импорт словаря
-dict_df = pd.read_fwf("pldf-win.txt", names=["Words"])
-dict = set(dict_df["Words"])
-print(dict)
-print(len(dict))
-# dict_df = dict_df.apply(lambda x: hash(tuple(x)), axis=1)
-# dict_hash = dict_df[0:]
-#
-# # Импорт данных
+
 # df = pd.read_excel('task4_data_for_univ_test_1.xlsx')
 #
 # for index, row in df.iterrows():

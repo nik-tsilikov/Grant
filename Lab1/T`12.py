@@ -1,0 +1,1 @@
+fraction = input("Input first fraction: ")
